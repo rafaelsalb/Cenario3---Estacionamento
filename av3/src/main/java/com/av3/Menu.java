@@ -20,6 +20,8 @@ public class Menu {
             System.out.println(opcao);
         }
         System.out.print(">");
-        return sc.nextInt();
+        int sel = sc.nextInt();
+        sc.nextLine();
+        return sel;
     }
 }

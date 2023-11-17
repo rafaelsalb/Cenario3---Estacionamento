@@ -6,17 +6,28 @@ import java.time.temporal.ChronoUnit;
 public class RegistroEstacionamento {
     private LocalTime entrada;
     private LocalTime saida;
+    private Placa placa;
     private double custo;
-    private String placa;
 
     public RegistroEstacionamento(String placa, int hour, int minute) {
-        this.placa = placa;
+        this.placa = new Placa(placa);
         this.entrada = LocalTime.of(hour, minute, 0);
     }
 
     public double fechar(int hour, int minute) {
         this.saida = LocalTime.of(hour, minute, 0);
-        this.custo = 3.0 * this.entrada.until(this.saida, ChronoUnit.MINUTES);
+        long time_diff = this.entrada.until(this.saida, ChronoUnit.MINUTES);
+        System.out.println(time_diff);
+        double custoInicial = TaxasEstacionamento.getTaxaInicial();
+        if (time_diff <= 180) {
+            this.custo = custoInicial;
+        }
+        else {
+            long duracaoEstadia = this.entrada.until(this.saida, ChronoUnit.MINUTES);
+            long minutosAdicionais = duracaoEstadia - 180;
+            double custoAdicional = Math.ceil((minutosAdicionais / 60.0) * TaxasEstacionamento.getTaxaAdicional());
+            this.custo = custoInicial + custoAdicional;
+        }
         return this.custo;
     }
 
@@ -36,25 +47,29 @@ public class RegistroEstacionamento {
         this.saida = saida;
     }
 
+    public String getPlacaString() {
+        return placa.getPlacaString();
+    }
+
+    public Placa getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(Placa placa) {
+        this.placa = placa;
+    }
+    
+    @Override
+    public String toString() {
+        return placa.getPlacaString();
+    }
+
     public double getCusto() {
         return custo;
     }
 
     public void setCusto(double custo) {
         this.custo = custo;
-    }
-
-    public String getPlaca() {
-        return placa;
-    }
-
-    public void setPlaca(String placa) {
-        this.placa = placa;
-    }
-
-    @Override
-    public String toString() {
-        return placa;
     }
 
 }

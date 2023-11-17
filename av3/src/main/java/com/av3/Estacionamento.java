@@ -3,29 +3,38 @@ package com.av3;
 import java.util.ArrayList;
 
 public class Estacionamento {
-    private ArrayList<RegistroEstacionamento> registros;
+    private RegistroEstacionamento[][] registros;
+    private ArrayList<RegistroEstacionamento> historico;
 
-    Estacionamento() {
-        registros = new ArrayList<>();
+    Estacionamento(int m, int n) {
+        registros = new RegistroEstacionamento[m][n];
+        historico = new ArrayList<>();
     }
 
-    public void push(String placa, int hour, int minute) {
-        registros.add(new RegistroEstacionamento(placa, hour, minute));
+    public void iniciarEstadia(String placa, int hour, int minute, int x, int y) {
+        RegistroEstacionamento r = new RegistroEstacionamento(placa.toUpperCase(), hour, minute);
+        System.out.println("A placa informada é do estado " + r.getPlaca().getEstado());
+        registros[x][y] = r;
     }
 
-    public RegistroEstacionamento remove(int idx) {
-        RegistroEstacionamento r = registros.get(idx);
-        registros.remove(idx);
+    public RegistroEstacionamento finalizarEstadia(int hora, int minuto, int x, int y) {
+        RegistroEstacionamento r = registros[x][y];
+        registros[x][y] = null;
+        r.fechar(hora, minuto);
+        historico.add(r);
         return r;
     }
 
-    public int search(String placa) {
-        for (int i = 0; i < registros.size(); i++) {
-            if (placa.equalsIgnoreCase(registros.get(i).getPlaca())) {
-                return i;
+    public int[] search(String placa) {
+        for (int i = 0; i < registros.length; i++) {
+            for (int j = 0; j < registros[0].length; j++) {
+                if (placa.equalsIgnoreCase(registros[i][j].getPlacaString())) {
+                    int[] res = {i, j};
+                    return res;
+                }
             }
         }
-        return -1;
+        return null;
     }
 
     @Override
@@ -35,17 +44,42 @@ public class Estacionamento {
 
     public ArrayList<String> getPlacas() {
         ArrayList<String> placas = new ArrayList<>();
-        for (RegistroEstacionamento registro : registros) {
-            placas.add(registro.getPlaca());
+        for (RegistroEstacionamento[] registroLinha : registros) {
+            for (RegistroEstacionamento registro : registroLinha) {
+                if (registro != null)
+                    placas.add(registro.getPlacaString());
+            }
         }
         return placas;
     }
 
-    public ArrayList<RegistroEstacionamento> getRegistros() {
+    public RegistroEstacionamento[][] getRegistros() {
         return registros;
     }
 
-    public void setRegistros(ArrayList<RegistroEstacionamento> registros) {
+    public void setRegistros(RegistroEstacionamento[][] registros) {
         this.registros = registros;
+    }
+
+    public String visualize() {
+        StringBuilder res = new StringBuilder();
+        res.append("   ");
+        for (int i = 0; i < registros[0].length; i++) {
+            res.append(i);
+            for (int j = String.valueOf(i).length(); j < 7; j++) {
+                res.append("_");
+            }
+            res.append(" ");
+        }
+        res.append("\n");
+        for (int i = 0; i < registros.length; i++) {
+            res.append(String.valueOf(i) + "| ");
+            for (RegistroEstacionamento registro : registros[i]) {
+                res.append(registro == null ? "-------" : registro.getPlacaString());
+                res.append(" ");
+            }
+            res.append("\n");
+        }
+        return res.toString();
     }
 }
