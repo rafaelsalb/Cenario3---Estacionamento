@@ -19,7 +19,7 @@ public class Placa {
 
     private int placaInt(String placa) {
         char[] chars = placa.toCharArray();
-        return ((int)chars[0] - 65) * 100 + ((int)chars[1] - 65) * 10 + ((int)chars[2] - 65);
+        return ((int)chars[0] - 65) * (26 * 26) + ((int)chars[1] - 65) * 26 + ((int)chars[2] - 65);
     }
 
     public String getPlacaString() {

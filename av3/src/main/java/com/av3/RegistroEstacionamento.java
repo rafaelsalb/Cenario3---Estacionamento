@@ -17,15 +17,17 @@ public class RegistroEstacionamento {
     public double fechar(int hour, int minute) {
         this.saida = LocalTime.of(hour, minute, 0);
         long time_diff = this.entrada.until(this.saida, ChronoUnit.MINUTES);
-        System.out.println(time_diff);
         double custoInicial = TaxasEstacionamento.getTaxaInicial();
-        if (time_diff <= 180) {
+        if (time_diff <= 15) {
+            this.custo = 0;
+        }
+        else if (time_diff <= 180) {
             this.custo = custoInicial;
         }
         else {
             long duracaoEstadia = this.entrada.until(this.saida, ChronoUnit.MINUTES);
             long minutosAdicionais = duracaoEstadia - 180;
-            double custoAdicional = Math.ceil((minutosAdicionais / 60.0) * TaxasEstacionamento.getTaxaAdicional());
+            double custoAdicional = Math.ceil((minutosAdicionais / 60.0)) * TaxasEstacionamento.getTaxaAdicional();
             this.custo = custoInicial + custoAdicional;
         }
         return this.custo;

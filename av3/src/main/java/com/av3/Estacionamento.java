@@ -11,10 +11,13 @@ public class Estacionamento {
         historico = new ArrayList<>();
     }
 
-    public void iniciarEstadia(String placa, int hour, int minute, int x, int y) {
+    public void iniciarEstadia(String placa, int hour, int minute, int x, int y) throws Exception {
+        if (registros[x][y] != null) {
+            throw new Exception("A posícão " + x + " " + y + " já está ocupada.");
+        }
         RegistroEstacionamento r = new RegistroEstacionamento(placa.toUpperCase(), hour, minute);
         System.out.println("A placa informada é do estado " + r.getPlaca().getEstado());
-        registros[x][y] = r;
+        registros[y][x] = r;
     }
 
     public RegistroEstacionamento finalizarEstadia(int hora, int minuto, int x, int y) {
@@ -74,8 +77,8 @@ public class Estacionamento {
         res.append("\n");
         for (int i = 0; i < registros.length; i++) {
             res.append(String.valueOf(i) + "| ");
-            for (RegistroEstacionamento registro : registros[i]) {
-                res.append(registro == null ? "-------" : registro.getPlacaString());
+            for (int j = 0; j < registros[0].length; j++) {
+                res.append(registros[i][j] == null ? "-------" : registros[i][j].getPlacaString());
                 res.append(" ");
             }
             res.append("\n");
